@@ -30,19 +30,19 @@
 <li>Stocks 
 <li>Store Location
 <li>Store Stocks
-<li>User
 
-<br>
 <br>
 
 # Features
 <hr>
 <br>
 
-- User Login authentication
-- validation for the Username  and Password.
-- validation for the current user and user identification
-- RESTFUL API with CRUD operations
+- Add new stock items to the system.
+- Update the quantity of existing stock items.
+- Delete stock items from the system.
+- Track the movement of stock items between different store locations.
+- Provide real-time visibility into the quantity of stock items available at each
+store location.
 
 <br>
 <br>
@@ -98,14 +98,6 @@ spring.jpa.show-sql=true
 spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
 
 logging.level.org.springframework.security=DEBUG
-
-
-
-
-
-
-
-
 
 ```
 
