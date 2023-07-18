@@ -1,38 +1,48 @@
 package com.dmart.service.impl;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dmart.model.StockItem;
 import com.dmart.model.StoreLocation;
+import com.dmart.model.StoreStockItem;
 import com.dmart.repository.StoreLocationRepository;
 import com.dmart.service.StockItemService;
 import com.dmart.service.StoreLocationService;
+import com.dmart.service.StoreStockItemService;
 import com.dmart.service.exception.ResponseNotFoundException;
 import com.dmart.utlDto.StockItemDto;
+import com.dmart.utlDto.StoreLocationDto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StoreLocationServiceImpl implements StoreLocationService {
     private final StoreLocationRepository storeLocationRepository;
-    private final StockItemService stockItemService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public StoreLocationServiceImpl(StoreLocationRepository storeLocationRepository, StockItemService stockItemService) {
+    public StoreLocationServiceImpl(StoreLocationRepository storeLocationRepository,
+    		 ModelMapper modelMapper) {
         this.storeLocationRepository = storeLocationRepository;
-        this.stockItemService=stockItemService;
+        this.modelMapper=modelMapper;
     }
 
     @Override
-    public StoreLocation addStoreLocation(StoreLocation storeLocation) {
-        return storeLocationRepository.save(storeLocation);
+    public StoreLocationDto addStoreLocation(StoreLocationDto storeLocation) {
+    	StoreLocation mappedData = modelMapper.map(storeLocation, StoreLocation.class);
+        StoreLocation savedData = storeLocationRepository.save(mappedData);
+        return modelMapper.map(savedData, StoreLocationDto.class);
     }
 
     @Override
-    public List<StoreLocation> getAllStoreLocations() {
-        return storeLocationRepository.findAll();
+    public List<StoreLocationDto> getAllStoreLocations() {
+    	
+    	List<StoreLocationDto> collect = storeLocationRepository.findAll().stream().map(store -> modelMapper.map(store, StoreLocationDto.class)).collect(Collectors.toList());
+    	return collect;
     }
 
 	@Override
@@ -43,49 +53,7 @@ public class StoreLocationServiceImpl implements StoreLocationService {
 		return Location;
 	}
 
-	@Override
-	public void updateQuantity(StoreLocation location, Long Id) {
-		this.findLocationById(Id);
-		System.out.println("in Update Quantity methodd..");
-		storeLocationRepository.save(location);
-		
-	}
+	
 
-	@Override
-	public String addQuantityInStore(Integer quantity, Long id, Long stockId) {
-		StoreLocation findLocationById = this.findLocationById(id);
-		StockItemDto stockItemById = stockItemService.getStockItemById(stockId);
-
-		List<StockItem> stockItem = findLocationById.getStockItems();
-		
-		
-		int stocks =0;
-		for(StockItem stock:stockItem) {
-			System.out.println(stock.getId()+" "+ stock.getQuantity());
-			if(stock.getId()==stockId)stocks+=stock.getQuantity();
-		}
-		
-		if((stocks+quantity) > stockItemById.getQuantity() ) {
-			return "Your Perent stock quantity is minimum first add more stock in parent stock..."+stockItemById.getQuantity() +" "+(stocks+quantity);
-		}
-		
-		boolean flag = false;
-		for(int i=0;i<stockItem.size();i++) {
-			if(stockItem.get(i).getId()==stockId) {
-			stockItem.get(i).setQuantity(stockItem.get(i).getQuantity()+quantity);
-				stockItem.add(i,stockItem.get(i));
-				flag=true;
-			}
-		}
-		
-		if(!flag) {
-			StockItem st = new StockItem(stockId,stockItemById.getName(),quantity);
-			stockItem.add(st);
-		}
-		
-		findLocationById.setStockItems(stockItem);
-		this.updateQuantity(findLocationById, id);
-		
-		return "Add quantity successfully.";
-	}
+	
 }

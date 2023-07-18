@@ -2,6 +2,8 @@ package com.dmart.model;
 
 import java.time.LocalDateTime;
 
+import com.dmart.utlDto.StockItemDto;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

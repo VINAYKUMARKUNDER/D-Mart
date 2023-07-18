@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dmart.model.StockItem;
+import com.dmart.model.StoreStockItem;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -29,5 +30,5 @@ public class StoreLocationDto {
     
 
  
-    private List<StockItem> stockItems = new ArrayList();
+    private List<StoreStockItemDto> stockItems = new ArrayList();
 }
